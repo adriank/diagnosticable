@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 enum DebugLevel {
   debug,
   info,
+  success,
   warning,
   error,
   off,
@@ -45,14 +46,17 @@ class Diagnosticable {
         case DebugLevel.debug:
           colorify = blue;
           break;
-        case DebugLevel.error:
-          colorify = red;
-          break;
         case DebugLevel.info:
           colorify = white;
           break;
+        case DebugLevel.success:
+          colorify = green;
+          break;
         case DebugLevel.warning:
           colorify = yellow;
+          break;
+        case DebugLevel.error:
+          colorify = red;
           break;
         case DebugLevel.off:
       }
@@ -64,6 +68,7 @@ class Diagnosticable {
   printStart([List<dynamic>? args]) => _print('[START] args: ${args?.map((e) => e.toString()).join(', ') ?? '(no arguments)'}', level: DebugLevel.info);
   printDebug(String message) => _print('[DBG] $message', level: DebugLevel.debug);
   printInfo(String message) => _print('[INF] $message', level: DebugLevel.info);
+  printSuccess(String message) => _print('[SCC] $message', level: DebugLevel.success);
   printError(String message) => _print('[ERR] $message', level: DebugLevel.error);
   printWarning(String message) => _print('[WRN] $message', level: DebugLevel.warning);
 
