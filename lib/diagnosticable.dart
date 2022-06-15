@@ -1,5 +1,6 @@
 library diagnosticable;
 
+import 'package:diagnosticable/colorify.dart';
 import 'package:flutter/foundation.dart';
 
 enum DebugLevel {
@@ -29,7 +30,7 @@ class Diagnosticable {
     if (shouldPrintDebug(level)) {
       final List<String> toShow = [];
       if (showTimestamps) {
-        toShow.add(DateTime.now().toString().split(' ')[1].split('.')[0]);
+        toShow.add(DateTime.now().toString().split(' ')[1]); //.split('.')[0]);
       }
       try {
         throw Exception();
@@ -38,16 +39,32 @@ class Diagnosticable {
         toShow.add('${trace.functionName}:${trace.lineNumber}');
       }
       final shouldCut = cutAfter != null ? cutAfter! < message.length : false;
-      toShow.add(shouldCut ? message.substring(0, cutAfter) + '...(cut)' : message);
-      debugPrint(toShow.join(' '));
+      Function colorify = white;
+      switch (level) {
+        case DebugLevel.debug:
+          colorify = blue;
+          break;
+        case DebugLevel.error:
+          colorify = red;
+          break;
+        case DebugLevel.info:
+          colorify = white;
+          break;
+        case DebugLevel.warning:
+          colorify = yellow;
+          break;
+        case DebugLevel.off:
+      }
+      print(colorify('${toShow.join(' ')}:'));
+      print(colorify(shouldCut ? '  ${message.substring(0, cutAfter)}...(cut)' : '  $message'));
     }
   }
 
-  printStart([List<dynamic>? args]) => _print('start with ' + (args?.map((e) => e.toString()).join(', ') ?? 'no arguments'), level: DebugLevel.info);
-  printDebug(String message) => _print(message, level: DebugLevel.debug);
-  printInfo(String message) => _print(message, level: DebugLevel.info);
-  printError(String message) => _print(message, level: DebugLevel.error);
-  printWarning(String message) => _print(message, level: DebugLevel.warning);
+  printStart([List<dynamic>? args]) => _print('[START] args: ${args?.map((e) => e.toString()).join(', ') ?? '(no arguments)'}', level: DebugLevel.info);
+  printDebug(String message) => _print('[DBG] $message', level: DebugLevel.debug);
+  printInfo(String message) => _print('[INF] $message', level: DebugLevel.info);
+  printError(String message) => _print('[ERR] $message', level: DebugLevel.error);
+  printWarning(String message) => _print('[WRN] $message', level: DebugLevel.warning);
 
   bool shouldPrintDebug(DebugLevel level) => kDebugMode && DebugLevel.values.indexOf(level) >= DebugLevel.values.indexOf(debugLevel);
 }
