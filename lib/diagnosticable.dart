@@ -1,5 +1,6 @@
 library diagnosticable;
 
+import 'dart:developer';
 import 'package:diagnosticable/colorify.dart';
 import 'package:flutter/foundation.dart';
 
@@ -55,8 +56,8 @@ class Diagnosticable {
           break;
         case DebugLevel.off:
       }
-      print(colorify('${toShow.join(' ')}:'));
-      print(colorify(shouldCut ? '  ${message.substring(0, cutAfter)}...(cut)' : '  $message'));
+      log(colorify('${toShow.join(' ')}:'), level: 2000);
+      log(colorify(shouldCut ? '  ${message.substring(0, cutAfter)}...(cut)' : '  $message'));
     }
   }
 
