@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 library diagnosticable;
 
 import 'dart:developer';
@@ -42,26 +44,35 @@ class Diagnosticable {
       }
       final shouldCut = cutAfter != null ? cutAfter! < message.length : false;
       Function colorify = white;
+      String levelString = 'DBG';
       switch (level) {
         case DebugLevel.debug:
           colorify = blue;
+          levelString = 'DBG';
           break;
         case DebugLevel.info:
           colorify = white;
+          levelString = 'INF';
           break;
         case DebugLevel.success:
           colorify = green;
+          levelString = 'SCC';
           break;
         case DebugLevel.warning:
           colorify = yellow;
+          levelString = 'WRN';
           break;
         case DebugLevel.error:
           colorify = red;
+          levelString = 'ERR';
           break;
         case DebugLevel.off:
       }
-      log(colorify('${toShow.join(' ')}:'), level: 2000);
-      log(colorify(shouldCut ? '  ${message.substring(0, cutAfter)}...(cut)' : '  $message'));
+      log(
+        colorify('${toShow.join(' ')}:\n${(shouldCut ? '${message.substring(0, cutAfter)}...(cut)' : '  $message')}'),
+        level: 2000,
+        name: levelString,
+      );
     }
   }
 
