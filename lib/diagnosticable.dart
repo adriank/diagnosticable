@@ -16,14 +16,16 @@ enum DebugLevel {
 }
 
 class Diagnosticable {
-  DebugLevel debugLevel;
-  bool showTimestamps;
-  int? cutAfter;
+  final DebugLevel debugLevel;
+  final bool showTimestamps;
+  final int? cutAfter;
+  final bool multiline;
 
-  Diagnosticable({
+  const Diagnosticable({
     this.debugLevel = DebugLevel.error,
     this.cutAfter = 800,
     this.showTimestamps = true,
+    this.multiline = true,
   });
 
   get className {
@@ -68,20 +70,22 @@ class Diagnosticable {
           break;
         case DebugLevel.off:
       }
+      final n = multiline ? '\n' : ' ';
+      final toPrint = ((shouldCut ? '${message.substring(0, cutAfter)}...(cut)' : '  $message')).trim();
       log(
-        colorify('${toShow.join(' ')}:\n${(shouldCut ? '${message.substring(0, cutAfter)}...(cut)' : '  $message')}'),
+        colorify('${toShow.join(' ')}:$n$toPrint'),
         level: 2000,
-        name: levelString,
+        name: colorify(levelString),
       );
     }
   }
 
-  printStart([List<dynamic>? args]) => _print('[START] args: ${args?.map((e) => e.toString()).join(', ') ?? '(no arguments)'}', level: DebugLevel.info);
-  printDebug(String message) => _print('[DBG] $message', level: DebugLevel.debug);
-  printInfo(String message) => _print('[INF] $message', level: DebugLevel.info);
-  printSuccess(String message) => _print('[SCC] $message', level: DebugLevel.success);
-  printError(String message) => _print('[ERR] $message', level: DebugLevel.error);
-  printWarning(String message) => _print('[WRN] $message', level: DebugLevel.warning);
+  printStart([List<dynamic>? args]) => _print('args: ${args?.map((e) => e.toString()).join(', ') ?? '(no arguments)'}', level: DebugLevel.info);
+  printDebug(String message) => _print(message, level: DebugLevel.debug);
+  printInfo(String message) => _print(message, level: DebugLevel.info);
+  printSuccess(String message) => _print(message, level: DebugLevel.success);
+  printError(String message) => _print(message, level: DebugLevel.error);
+  printWarning(String message) => _print(message, level: DebugLevel.warning);
 
   bool shouldPrintDebug(DebugLevel level) => kDebugMode && DebugLevel.values.indexOf(level) >= DebugLevel.values.indexOf(debugLevel);
 }

@@ -2,15 +2,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:diagnosticable/diagnosticable.dart';
 
-final logger = Diagnosticable(
+const logger = Diagnosticable(
   debugLevel: DebugLevel.debug,
 );
+
 void main() {
   test('prints', () {
     logger.printStart();
     logger.printDebug('debug');
-    logger.printWarning('warning');
-    logger.printError('error');
     logger.printInfo('info');
+    logger.printWarning('warning');
+    logger.printSuccess('success');
+    logger.printError('error');
   });
 }
