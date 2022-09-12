@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 library diagnosticable;
 
 import 'dart:developer';
@@ -20,12 +18,14 @@ class Diagnosticable {
   final bool showTimestamps;
   final int? cutAfter;
   final bool multiline;
+  final bool showDebugLevel;
 
   const Diagnosticable({
     this.debugLevel = DebugLevel.error,
     this.cutAfter = 800,
     this.showTimestamps = true,
     this.multiline = true,
+    this.showDebugLevel = false,
   });
 
   get className {
@@ -41,7 +41,7 @@ class Diagnosticable {
       try {
         throw Exception();
       } catch (e, s) {
-        final trace = CustomTrace.fromStackTrace(s).currentCall;
+        final trace = _CustomTrace.fromStackTrace(s).currentCall;
         toShow.add('${trace.functionName}:${trace.lineNumber}');
       }
       final shouldCut = cutAfter != null ? cutAfter! < message.length : false;
@@ -71,11 +71,12 @@ class Diagnosticable {
         case DebugLevel.off:
       }
       final n = multiline ? '\n' : ' ';
+      final printDebugLevel = showDebugLevel ? '[$levelString] ' : '';
       final toPrint = ((shouldCut ? '${message.substring(0, cutAfter)}...(cut)' : '  $message')).trim();
       log(
-        colorify('${toShow.join(' ')}:$n$toPrint'),
+        colorify('${toShow.join(' ')}:$n$printDebugLevel$toPrint'),
         level: 2000,
-        name: colorify(levelString),
+        name: levelString,
       );
     }
   }
@@ -103,15 +104,15 @@ class _Frame {
   late int columnNumber;
 }
 
-class CustomTrace {
+class _CustomTrace {
   _Frame currentCall;
   _Frame? previousCall;
 
-  CustomTrace({required this.currentCall, this.previousCall});
+  _CustomTrace({required this.currentCall, this.previousCall});
 
-  factory CustomTrace.fromStackTrace(StackTrace trace) {
+  factory _CustomTrace.fromStackTrace(StackTrace trace) {
     final frames = trace.toString().split('\n');
-    return CustomTrace(
+    return _CustomTrace(
       currentCall: _readFrame(frames[2]),
       previousCall: (frames.length >= 3) ? _readFrame(frames[3]) : null,
     );
