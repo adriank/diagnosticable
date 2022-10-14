@@ -24,7 +24,7 @@ class Diagnosticable {
     this.debugLevel = DebugLevel.error,
     this.cutAfter = 800,
     this.showTimestamps = true,
-    this.multiline = true,
+    this.multiline = !kIsWeb,
     this.showDebugLevel = false,
   });
 
@@ -41,8 +41,12 @@ class Diagnosticable {
       try {
         throw Exception();
       } catch (e, s) {
-        final trace = _CustomTrace.fromStackTrace(s).currentCall;
-        toShow.add('${trace.functionName}:${trace.lineNumber}');
+        if (kIsWeb) {
+          // TODO maybe implement function name + line on web
+        } else {
+          final trace = _CustomTrace.fromStackTrace(s).currentCall;
+          toShow.add('${trace.functionName}:${trace.lineNumber}');
+        }
       }
       final shouldCut = cutAfter != null ? cutAfter! < message.length : false;
       Function colorify = white;
