@@ -4,12 +4,12 @@
 orig=$(grep "^version: " pubspec.yaml)
 changed=$orig
 echo $orig
-re="(.*)\+(.*)"
+re="(.*)\.(.*)\.(.*)"
 while [[ $changed =~ $re ]]; do
-  inc="$((${BASH_REMATCH[2]}+1))"
-  changed="${BASH_REMATCH[1]}"
+  inc="$((${BASH_REMATCH[3]}+1))"
+  changed="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
 done
-changed="$changed+$inc"
+changed="$changed.$inc"
 
 sed -i '' "s/$orig/$changed/g" pubspec.yaml
 
