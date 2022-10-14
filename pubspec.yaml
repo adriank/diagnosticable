@@ -1,6 +1,6 @@
 name: diagnosticable
 description: Clutterless logger capable of displaying times, positions in file.
-version: 0.0.1
+version: 0.0.4
 homepage: https://github.com/adriank/diagnosticable
 
 environment:
@@ -17,4 +17,3 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-
