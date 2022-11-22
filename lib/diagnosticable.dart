@@ -44,6 +44,8 @@ class Diagnosticable {
         throw Exception();
       } catch (e, s) {
         if (kIsWeb) {
+          print(e);
+          print(s);
           // TODO maybe implement function name + line on web
         } else {
           final trace = _CustomTrace.fromStackTrace(s).currentCall;
