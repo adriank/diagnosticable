@@ -20,17 +20,19 @@ class Diagnosticable {
   final bool multiline;
   final bool showDebugLevel;
 
+  /// This can be useful on web where no debug symbols from Flutter are available as of now.
+  final bool forceDebugMessages;
+
   const Diagnosticable({
     this.debugLevel = DebugLevel.error,
     this.cutAfter = 800,
     this.showTimestamps = true,
     this.multiline = !kIsWeb,
     this.showDebugLevel = false,
+    this.forceDebugMessages = false,
   });
 
-  get className {
-    return runtimeType.toString();
-  }
+  get className => runtimeType.toString();
 
   void _print(String message, {DebugLevel level = DebugLevel.debug}) {
     if (shouldPrintDebug(level)) {
@@ -77,11 +79,15 @@ class Diagnosticable {
       final n = multiline ? '\n' : ' ';
       final printDebugLevel = showDebugLevel ? '[$levelString] ' : '';
       final toPrint = ((shouldCut ? '${message.substring(0, cutAfter)}...(cut)' : '  $message')).trim();
-      log(
-        colorify('${toShow.join(' ')}:$n$printDebugLevel$toPrint'),
-        level: 2000,
-        name: levelString,
-      );
+      if (!kDebugMode) {
+        print('${toShow.join(' ')}:$n$printDebugLevel$toPrint');
+      } else {
+        log(
+          colorify('${toShow.join(' ')}:$n$printDebugLevel$toPrint'),
+          level: 2000,
+          name: levelString,
+        );
+      }
     }
   }
 
@@ -92,7 +98,7 @@ class Diagnosticable {
   printError(String message) => _print(message, level: DebugLevel.error);
   printWarning(String message) => _print(message, level: DebugLevel.warning);
 
-  bool shouldPrintDebug(DebugLevel level) => kDebugMode && DebugLevel.values.indexOf(level) >= DebugLevel.values.indexOf(debugLevel);
+  bool shouldPrintDebug(DebugLevel level) => forceDebugMessages || kDebugMode && DebugLevel.values.indexOf(level) >= DebugLevel.values.indexOf(debugLevel);
 }
 
 class _Frame {
