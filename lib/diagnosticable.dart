@@ -42,7 +42,7 @@ class Diagnosticable {
   void _print(String message, {DebugLevel level = DebugLevel.debug}) {
     if (shouldPrintDebug(level)) {
       final List<String> toShow = [
-        if (scope != null) '[${scope!}] ',
+        if (scope != null) '[${scope!}]',
       ];
       if (showTimestamps) {
         toShow.add(DateTime.now().toString().split(' ')[1]); //.split('.')[0]);
