@@ -13,12 +13,16 @@ enum DebugLevel {
   off,
 }
 
+@immutable
 class Diagnosticable {
   final DebugLevel debugLevel;
   final bool showTimestamps;
   final int? cutAfter;
   final bool multiline;
   final bool showDebugLevel;
+
+  /// Used to distinguish between different loggers
+  final String? scope;
 
   /// This can be useful on web where no debug symbols from Flutter are available as of now.
   final bool forceDebugMessages;
@@ -29,6 +33,7 @@ class Diagnosticable {
     this.showTimestamps = true,
     this.multiline = !kIsWeb,
     this.showDebugLevel = false,
+    this.scope,
     this.forceDebugMessages = false,
   });
 
@@ -36,7 +41,9 @@ class Diagnosticable {
 
   void _print(String message, {DebugLevel level = DebugLevel.debug}) {
     if (shouldPrintDebug(level)) {
-      final List<String> toShow = [];
+      final List<String> toShow = [
+        if (scope != null) '[${scope!}] ',
+      ];
       if (showTimestamps) {
         toShow.add(DateTime.now().toString().split(' ')[1]); //.split('.')[0]);
       }
